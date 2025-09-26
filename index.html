@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>valagamer</title>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      direction: rtl;
+    }
+
+    .timer-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+      text-align: center;
+      max-width: 720px;
+      width: 92%;
+    }
+
+    .title {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #2d3748;
+      margin-bottom: 6px;
+    }
+
+    .date-display {
+      font-size: 1rem;
+      color: #718096;
+      margin-bottom: 18px;
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .time-unit {
+      background: linear-gradient(135deg, #4299e1, #3182ce);
+      color: white;
+      padding: 14px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(66, 153, 225, 0.22);
+      transition: transform 0.18s ease;
+    }
+
+    .time-unit:hover {
+      transform: translateY(-6px);
+    }
+
+    .time-number {
+      font-size: 2rem;
+      font-weight: 700;
+      display: block;
+      line-height: 1;
+    }
+
+    .time-label {
+      font-size: 0.85rem;
+      margin-top: 6px;
+      opacity: 0.95;
+    }
+
+    /* مخصوص ثانیه: زیرثانیه و عکس */
+    .seconds-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .subsec {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      opacity: 0.95;
+      background: rgba(255,255,255,0.12);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .timer-image {
+      margin-top: 10px;
+    }
+
+    .timer-image img {
+      width: 120px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+      display: block;
+    }
+
+    .message {
+      font-size: 1.05rem;
+      color: #4a5568;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .expired {
+      color: #e53e3e;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    @media (max-width: 640px) {
+      .countdown {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .time-number {
+        font-size: 1.6rem;
+      }
+      .timer-image img {
+        width: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="timer-container">
+    <h1 class="title">زمان باقی مانده تا تولد آقو والا 🎁</h1>
+    <div class="date-display">22 اردیبهشت 1405 (12 می 2026)</div>
+
+    <div class="countdown" id="countdown">
+      <div class="time-unit">
+        <span class="time-number" id="days">00</span>
+        <div class="time-label">روز</div>
+      </div>
+      <div class="time-unit">
+        <span class="time-number" id="hours">00</span>
+        <div class="time-label">ساعت</div>
+      </div>
+      <div class="time-unit">
+        <span class="time-number" id="minutes">00</span>
+        <div class="time-label">دقیقه</div>
+      </div>
+      <div class="time-unit seconds-unit" id="secondsUnit">
+        <span class="time-number" id="seconds">00</span>
+        <div class="time-label">ثانیه</div>
+        <div class="subsec" id="milliseconds">000</div>
+
+        <!-- عکس داخل سلول ثانیه قرار می‌گیرد -->
+        <div class="timer-image">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAL0AAADbCAYAAAA4epB3AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAE7mlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4xLWMwMDMgNzkuOTY5MGE4NywgMjAyNS8wMy8wNi0xOToxMjowMyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI2LjggKFdpbmRvd3MpIiB4bXA6Q3JlYXRlRGF0ZT0iMjAyNS0wOS0yNlQxODozOToxNyswMzozMCIgeG1wOk1vZGlmeURhdGU9IjIwMjUtMDktMjZUMTg6NDc6NDYrMDM6MzAiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjUtMDktMjZUMTg6NDc6NDYrMDM6MzAiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOmE2YmM3MjllLTE1YWEtMDA0Yi1iNmY4LTZiOWVkNzk4NDc5YiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDphNmJjNzI5ZS0xNWFhLTAwNGItYjZmOC02YjllZDc5ODQ3OWIiIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDphNmJjNzI5ZS0xNWFhLTAwNGItYjZmOC02YjllZDc5ODQ3OWIiPiA8eG1wTU06SGlzdG9yeT4gPHJkZjpTZXE+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJjcmVhdGVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOmE2YmM3MjllLTE1YWEtMDA0Yi1iNmY4LTZiOWVkNzk4NDc5YiIgc3RFdnQ6d2hlbj0iMjAyNS0wOS0yNlQxODozOToxNyswMzozMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDI2LjggKFdpbmRvd3MpIi8+IDwvcmRmOlNlcT4gPC94bXBNTTpIaXN0b3J5PiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pp8PjNMAAAvJSURBVHic7d1djFxlHcfx7+kL7VpXWV8Q3WVNwGox4VU3YWzLm7C2EoMJiY2FBUMCbjESlHjFzSbKnRcb3MgmXqAsVAn2ClDeTEMpDgQTwhWrtK6kLfEFLppau+wuPV6cOZ3T2TMzz5k5M+fl//skm52dPWfOs7O/eeb/PPOcGc/3fUQsWZN1A0T6TaEXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3PWZd2AXjgwn3ULVvn0NRd7dwM/i1z3wWWXXb4ErACngSXgr8BvH/rdG78CzHyq9dVb+nu8UoY+R84BvgB8G7gn5ndrqId+A/BVYCPwEsEDoO88L4uj9lcpQ9+rf9z2TbMrCTb3gQ+ARYKADzb83iO4/9dFtl8BLvU87gT2Am8RPANIikoZ+h5zfUh5wAAw4F2wp9k+jdevA87Zvmn2fuDHCY4FwMsnJwv3/8xiUFm4O8lFH+7IXjyXhLd5unY56TF8zUq4KWXo+8Q1lL5/5GEIypd2+3T6YDIz6E2DQt97SYOcuIdPuH1nSjTALWfoS/QPSsTq352QykAxp5Q9vYW55jhW/+6k1NOLOaXs6aW/ivYEU8rQF+2fkJaM/u51wAXA1yrDczcA1xC81vB09djEY8BfsmlWc6UMvfRUNOTXAxVglGDtkEewbGI9cHtleG5D9djEO8B/smpsHIVenFSG574H3ESwKO48gvVEEPTqa6m/iryxdv25wLeAKvBoH5valkIvLVWG524GdgI3EPTwYbjX1L6vbdjFo/6C2XBleO726rGJfwPP9qfF7Sn00syWoYWpXfML3Lxl20VfBDYR/+pv3FAiDL4PbK8Mz52sHps4Cbzcu+a605SlxPnU0MLUXcAkcPn8wcMD1APvNXw1E/5uPfD1yvDcBEFZlDmFXuLcBHwHOL/2s9fw3VW4/Udqt7mz+6Z1T6FP5r8EA7cy2zm0MHUHMEKkd58/eLjbGdHP1Xr7HV3eTtcU+mTeoT5wK+Ny3quHFqbuAbZxdjkDwPzBw53cZrh/WN/vAbZ308huKfTJ5Gq+OaKTk04anTe0MHU7cD31CY5Vt9ll8HNR32v2JgHvgj1hJ3EmDLUTRLJoy5mL4YU//22ym5vcCXyT4BTHs243JeGMTljfvwL8JuVjOFFPn8xnyO8qh27add3QwtRtwGddNu6wt4/KtL5X6JO5MOsG9MB5QwtTtwJbianjm0mxvt/WyQ11Q6FPpowzN2FZEy4f6PUzWbS+v64yPHdLj4+3ikKfTCZvwOSok9mkRGVNoy7KnDD4m8igxNFANgH/yMP/pN7bN50xiQwy0zpuq+vCsPvVU4lutqOyptH8wcNs2XZR0t18gCceee008NKuH0wk3b8rCn0yeZ2bD9e5JJFaWeMS/CceeS3u6ndHx2ee7/S4nVLokwnLgLzO4LiKljU9eSA3CTnUH6D/A/4IHOjF8VtR6JO5JHK5qMFPpaxpNH/wMG++/V67zcLjrQB/Gh2feRxou1PaNJBNpqhBj7qRoLRJdbYmQeA94MDo+MzDZLTUWD19D8QNPOMGt/62rpegRIP0uMP2Vw4tTO2ivnoyFQ6Bjzo6Oj7zKPBcmm1IQj19OfjVU5Ntz0yqeDO73j++GH2k9euZK6zjTwJ/IOOzqBT64gsDtbfVRmPL0z9ZWVrZtfWKkXNJMewd1PGPkfHCPYXegLHl6R8BdwGfX1la8d8/vggpBL9IdXyUQl9yY8vTe4C7gc3UQrj1ihGvFvx+ybyOj9JAtk8yWoJ8C3An8CUive7K0gpbrxjhlTeO8smPb2y+dwuOvXw4H595HR+lnr68do4tT38fuDJy3ZmSJgx+J4pYx0cp9OW0Y2x5+ofAtbQ5qTtpmVPUOj5KoS+fHWPL0/cSvDlT09P+oN7b96i+z1UdH2Wipq9snN0D7AG2sDoAe6uLk8/RZsqPNj1mDlwFbB5bnr6VNue5RoXBn/97+xeYilzHR5kIPUHgLyH+JJCJysbZ23A7X3MtkQVaI1c9uGqDo68+0GETm2tznDDUs2PL0+sJBq2rzuVt5/3jiy0HtUWv46OslDdbOPujKhvfoSt8b8Z2X6kt0ErZmrHl6UuBi+kg8CmUObmv46OshN5ruBz3tnRxD4hmD5C8iJ5zGne9s1azOQnW1uS2jo+yEvpWXMLu8t6NWWlsU1dtbOztE9TxJ4FnyGkdH6XQl0MqD8rGMidBHb8MvJjnOj5KoZezJHjRKgz8EvD86PjML4GDPWtYihR6idWml28M/C+AF3reqJRYCP1u6p+aIQ6eeG6+1a8LHXgwEPrKxtlvoMA727f/UKtfFz7wYCD0BD19XufXc8VC4MFG6MWBlcCDQi/YCjwo9OZZCzwo9KZZDDzYWWXZN3ErIvPIauBBPb1JlgMPCr051gMPKm9MaRF4P/J9mRIHHhR6MxwCD8Fpfi/WFo+VMvCg0DsbqbgNUAcHB1M/9okTJ1ZdFzdg/sfz98fu7xB4DzgKPFNbHlyI1ZKdUuhLrhb4Zh+84BOc03qgdsbTsxRgPXy3FPpy8gFv3/5D0Vr9NKtPjP+A4CTuWXJ+il+ayj57Y2pZ8evr73sPWAQ+3Lf/0ArwIcHAtNnXr0fHZ36OocBDyXt6Q8uKfYK/8zRwbN/+Qx8FNgDvAq+Pjs8cAKrAW9k1MT9KHXrqy4p7clJ3N4PWt16413nbi298aNV1MYNbH/jp6+vvq46OM08wE5PXT0PMVNlDb0E02L8H/oXC3lLZa3pLfOA4CnxbCn25JPvMcKMUejFHNX0fJBm0uu5flCXMeaSeXsxR6B24rruRYlDoxRyFXszRQDZl3Q5apffU04s5Cr2YU+bQm1pWLO5KG3pDy4olodKGHr1bsTSh2Zuci1tLL90pc0/fU7141wPpD4VezFHoxRzV9CmLq8H1Km2+KPQ5okFrf6i8KaC4t/kTdwq9mKPQizmq6ftAg9t8UegzokFrdlTeiDllDb2WFUtTpQx9bVmxSKyy1vS7G35u9v6OHT8TxM2VaxFaMZQ19ND6jUw9h22a7dNXeiEqfWUPfbNQh/W+a+jDbTVGKIFShr66OLm+zSa7a3V/YxnUzNra966DH/bcrqXQ4ODgWfuo5+9eKUPvYG91cXIvcIfDth48uEKKvXyS2r9NyKPPVI932h5rrIY+iaYlUNKB64kTJ87sE73sol0v/+T+I6Y+LK0bCn0fRMPa7HKzB0D0+ugDpoGPenpnpZynF2lFoe+Q5uSLS6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUcnkXRI56oWl0KfE3oQ9Y/KGzFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6F3s5x1AyQ9Cr2bd4DTWTdC0qHQu3mJeuiTfOCy5JBOF3Tw5P4jT1UGZq8FNlP/UGZv5KoHs2yWPk6zQwq9m6eA7wIXEnl2PPrqA5k1KKp6alIfp5mAyht3bxIMaPNU3vgEZZd6+gQUencDpPip4ZIdhd7dKEE5qOAXnELv7svo/ioF/RPdfYV6Pa/evsAUencKekko9GKOQi/mKPRijkIv5ij0Yo5CX0zRqdO9WTakiBT6YvOrpyafzboRRaPQu8nj/RQucVZPn5CWFrvZBCwBG2o/u6601AtaOZTHHiyPPgYcIri/fIevkMu2nXxJF9TTO6gMzK4BqsD5wCccd/NQQHPJ8/3y/V+qb2fdAnZXBmZ3ALt7faDqqcnCd1yVzf09XilDL9KKanoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdzFHoxR6EXcxR6MUehF3MUejFHoRdz/g88qzJjThjrdAAAAABJRU5ErkJggg==" alt="valagamer image">
+        </div>
+      </div>
+    </div>
+
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    // تاریخ هدف: 22 اردیبهشت 1405 (12 می 2026) - نیمه شب (00:00:00)
+    const targetDate = new Date('2026-05-12T00:00:00').getTime();
+
+    function pad(num, size) {
+      let s = "000" + num;
+      return s.substr(s.length - size);
+    }
+
+    function update() {
+      const now = Date.now();
+      let distance = targetDate - now;
+
+      if (distance <= 0) {
+        document.getElementById('countdown').style.display = 'none';
+        document.getElementById('message').innerHTML = '<div class="expired">🎉 زمان رسیده! 22 اردیبهشت 1405 🎉</div>';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      distance %= (1000 * 60 * 60 * 24);
+      const hours = Math.floor(distance / (1000 * 60 * 60));
+      distance %= (1000 * 60 * 60);
+      const minutes = Math.floor(distance / (1000 * 60));
+      distance %= (1000 * 60);
+      const seconds = Math.floor(distance / 1000);
+      const ms = distance % 1000; // میلی‌ثانیه باقی‌مانده
+
+      document.getElementById('days').textContent = pad(days, 2);
+      document.getElementById('hours').textContent = pad(hours, 2);
+      document.getElementById('minutes').textContent = pad(minutes, 2);
+      document.getElementById('seconds').textContent = pad(seconds, 2);
+      document.getElementById('milliseconds').textContent = pad(ms, 3);
+    }
+
+    // استفاده از requestAnimationFrame برای نمایش زیرثانیه روان
+    function loop() {
+      update();
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+  </script>
+</body>
+</html>
