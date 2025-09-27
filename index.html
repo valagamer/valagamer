@@ -1,164 +1,61 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>valagamer</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .timer-container {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      max-width: 600px;
-      width: 90%;
-    }
-
-    .title {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #2d3748;
-      margin-bottom: 10px;
-    }
-
-    .date-display {
-      font-size: 1.2rem;
-      color: #718096;
-      margin-bottom: 30px;
-    }
-
-    .countdown {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin-bottom: 10px;
-    }
-
-    .time-unit {
-      background: linear-gradient(135deg, #4299e1, #3182ce);
-      color: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(66, 153, 225, 0.3);
-      transition: transform 0.3s ease;
-    }
-
-    .time-number {
-      font-size: 2.5rem;
-      font-weight: bold;
-      display: block;
-      line-height: 1;
-    }
-
-    .time-label {
-      font-size: 0.9rem;
-      margin-top: 8px;
-      opacity: 0.9;
-    }
-
-    /* 🔥 صدم ثانیه زیر شمارنده */
-    .milliseconds {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-top: 5px;
-      color: #2d3748;
-    }
-
-    /* عکس زیر ثانیه */
-    .timer-image {
-      margin-top: 15px;
-    }
-    .timer-image img {
-      width: 150px;
-      border-radius: 10px;
-    }
-
-    .expired {
-      color: #e53e3e;
-      font-weight: bold;
-      font-size: 1.5rem;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>valagamer</title>
+<style>
+  body {
+    background: #0d1117;
+    color: #00ff9f;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 2rem;
+  }
+  #countdown {
+    font-size: 3rem;
+    letter-spacing: 2px;
+  }
+  .label {
+    font-size: 1.2rem;
+    color: #888;
+  }
+</style>
 </head>
 <body>
-  <div class="timer-container">
-    <h1 class="title">زمان باقی مانده تا تولد آقو والا 🎁</h1>
-    <div class="date-display">22 اردیبهشت 1405</div>
 
-    <div class="countdown" id="countdown">
-      <div class="time-unit">
-        <span class="time-number" id="days">0</span>
-        <div class="time-label">روز</div>
-      </div>
-      <div class="time-unit">
-        <span class="time-number" id="hours">0</span>
-        <div class="time-label">ساعت</div>
-      </div>
-      <div class="time-unit">
-        <span class="time-number" id="minutes">0</span>
-        <div class="time-label">دقیقه</div>
-      </div>
-      <div class="time-unit">
-        <span class="time-number" id="seconds">0</span>
-        <div class="time-label">ثانیه</div>
-        <div class="milliseconds" id="milliseconds">00</div>
-      </div>
-    </div>
+<div id="countdown">در حال بارگذاری...</div>
+<div class="label">تا ۲۲ اردیبهشت ۱۴۰۵</div>
 
-    <!-- 📸 عکس زیر ثانیه -->
-    <div class="timer-image">
-      <img src="Screenshot 2025-09-26 183917.png" alt="timer image" />
-    </div>
+<script>
+// 📅 تبدیل ۲۲ اردیبهشت ۱۴۰۵ به میلادی ≈ 2026-05-12
+const targetDate = new Date("2026-05-12T00:00:00").getTime();
 
-    <div class="message" id="message"></div>
-  </div>
+function updateCountdown() {
+  const now = new Date().getTime();
+  const distance = targetDate - now;
 
-  <script>
-    const targetDate = new Date('2026-05-12T00:00:00').getTime();
+  if (distance <= 0) {
+    document.getElementById("countdown").innerText = "زمان رسید!";
+    return;
+  }
 
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  const milliseconds = Math.floor((distance % 1000) / 10); // صدم‌ثانیه (00 تا 99)
 
-      if (distance < 0) {
-        document.getElementById("countdown").style.display = "none";
-        document.getElementById("message").innerHTML =
-          '<div class="expired">🎉 زمان رسیده! 22 اردیبهشت 1405 🎉</div>';
-        return;
-      }
+  document.getElementById("countdown").innerText = 
+    `${days.toString().padStart(2, '0')}روز : ${hours.toString().padStart(2, '0')}ساعت : ${minutes.toString().padStart(2, '0')}دقیقه : ${seconds.toString().padStart(2, '0')}ثانیه : ${milliseconds.toString().padStart(2, '0')}صدم`;
+}
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor(
-        (distance % (1000 * 60 * 60)) / (1000 * 60)
-      );
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      const milliseconds = Math.floor((distance % 1000) / 10); // صدم ثانیه
+// 🎯 آپدیت هر 10 میلی‌ثانیه برای روون بودن صدم‌ثانیه
+setInterval(updateCountdown, 10);
+</script>
 
-      document.getElementById("days").textContent = days.toString().padStart(2, "0");
-      document.getElementById("hours").textContent = hours.toString().padStart(2, "0");
-      document.getElementById("minutes").textContent = minutes.toString().padStart(2, "0");
-      document.getElementById("seconds").textContent = seconds.toString().padStart(2, "0");
-      document.getElementById("milliseconds").textContent = milliseconds.toString().padStart(2, "0");
-    }
-
-    // به‌روزرسانی هر 10 میلی‌ثانیه برای روان بودن
-    setInterval(updateCountdown, 10);
-  </script>
 </body>
 </html>
